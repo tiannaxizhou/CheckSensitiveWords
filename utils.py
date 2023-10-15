@@ -1,3 +1,7 @@
+import re
+import pickle
+
+
 class SeparatePinyin:
     def __init__(self):
         sheng_mu = 'b,p,m,f,d,t,n,l,g,k,h,j,q,x,z,c,s,zh,ch,sh,r,y,w'.split(',')
@@ -30,6 +34,18 @@ class SeparatePinyin:
                 else:
                     p_list.append(word[0:i])
                     self.separate_pinyin(word[i:], ','.join(p_list))
+
+
+def remove_others(message):
+    msg_strip = ''.join(re.findall('[\u4e00-\u9fa5A-Za-z0-9]', message))
+    return msg_strip
+
+
+def strip_file():
+    with open("test_file.txt", "r", encoding="utf-8") as f:
+        raw_text = f.read()
+        clean_text = remove_others(raw_text)
+        pickle.dump(clean_text, open("test_file.pkl", "wb"))
 
 
 if __name__ == '__main__':

@@ -60,6 +60,7 @@ class DFAFilter:
         self.prev_sent += message
         # 组合词检测
         if self.is_comb_sensitive():
+            self.prev_sent = ""
             return "组合敏感词", True
 
         # 词库检测
@@ -69,11 +70,11 @@ class DFAFilter:
 
         # TODO: 自动分割中英文输入，拼音按一个character算
         while start < len(message):
+            level = self.keyword_chains
             if self.prev_level is None or not cont_flag:
-                level = self.keyword_chains
                 candidates = ""
             else:
-                level = self.prev_level
+                level.update(self.prev_level)
                 candidates = self.part_word
             step_ins = 0
             for char in message[start:]:
@@ -82,7 +83,6 @@ class DFAFilter:
                     candidates += char
                     if self.delimit not in level[char]:
                         level = level[char]
-                        self.prev_level = level
                         self.part_word = candidates
                     else:
                         ret.append(repl * step_ins)
